@@ -1,4 +1,4 @@
-"""Frequency conversion functions"""
+import numpy
 import datetime
 
 class TSDataFrame:
