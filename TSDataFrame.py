@@ -27,7 +27,6 @@ class TSDataFrame:
         self.data = []
         self.index = []
     def add_from_dict(self, data_dict):
-
         """This takes an array of dictionaries consisting of 
         {'time': DateTime, 'value': Float}."""
 
@@ -51,21 +50,25 @@ class TSDataFrame:
                 else:
                     min_index = self.index.index(min(t for t in self.index if t > d['time']))
                     self.index.insert(min_index, d['time'])
-                    self.data.insert(min_index, [float['nan']]*cols + [d['value']])
-
+                    self.data.insert(min_index, [float('nan')]*cols + [d['value']])
 
         for d in self.data:
             "Add NaN to cols that got missed."
             if len(d) == cols:
-                d.append[float('nan')]
+                d.append(float('nan'))
+
+    def add_from_array(self, data_array):
+        """Takes a series of [[time1, value1], [time2, value2]]"""
+        pass
 
 if __name__ == '__main__':
     ts = TSDataFrame()
     dict1 = [{'time': datetime.date(2013,1,1), 'value': 60},
-             {'time': datetime.date(2013,1,2), 'value': 70}]
+             {'time': datetime.date(2013,1,2), 'value': 70},
+             {'time': datetime.date(2013,1,4), 'value': 90}]
     dict2 = [{'time': datetime.date(2013,1,1), 'value': 1.2},
              {'time': datetime.date(2013,1,2), 'value': -5},
-             {'time': datetime.date(2013,1,3), 'value': 80}]
+             {'time': datetime.date(2013,1,3), 'value': 3.1415}]
     ts.add_from_dict(dict1)
     ts.add_from_dict(dict2)
     for i, v in enumerate(ts.index):
