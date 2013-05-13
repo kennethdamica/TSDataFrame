@@ -26,40 +26,54 @@ class TSDataFrame:
     def __init__(self):
         self.data = []
         self.index = []
-    def add_from_dict(self, data_dict):
-        """This takes an array of dictionaries consisting of 
-        {'time': DateTime, 'value': Float}."""
-
-        "See how many columns there are currently"
+    def num_columns(self):
+        "Returns number of data columns"
         if self.data: 
-            cols = len(self.data[0])
+            return len(self.data[0])
         else: 
-            cols = 0
+            return 0
+    def add(self, data_object):
+        """This takes an array of dictionaries consisting of 
+        {'time': DateTime, 'value': Float}
 
-        for d in data_dict:
-            
-            if d['time'] in self.index:
+        or an array of arrays like 
+        [[period1,value1],[period2,value2]]"""
+        if len(data_object) == 0:
+            raise(Exception("Empty data series passed"))
+
+        object_type = type(data_object[0])
+
+        cols = self.num_columns()
+
+        for d in data_object:
+            if object_type == type({}):
+                period = d['time']
+                value = d['value']
+            elif object_type == type([]):
+                period = d[0]
+                value = d[1]
+            else: 
+                pass
+
+            if period in self.index:
                 "If index already exists, append data."
-                self.data[self.index.index(d['time'])].append(d['value'])
+                self.data[self.index.index(period)].append(value)
             else:
                 """When it's a new index, find the first index
                    that is greater and insert there."""
-                if len([t for t in self.index if t > d['time']]) == 0:
-                    self.index.append(d['time'])
-                    self.data.append([float('nan')]*cols + [d['value']])
+                if len([t for t in self.index if t > period]) == 0:
+                    self.index.append(period)
+                    self.data.append([float('nan')]*cols + [value])
                 else:
-                    min_index = self.index.index(min(t for t in self.index if t > d['time']))
-                    self.index.insert(min_index, d['time'])
-                    self.data.insert(min_index, [float('nan')]*cols + [d['value']])
+                    min_index = self.index.index(min(t for t in self.index if t > period))
+                    self.index.insert(min_index, period)
+                    self.data.insert(min_index, [float('nan')]*cols + [value])
 
         for d in self.data:
             "Add NaN to cols that got missed."
             if len(d) == cols:
                 d.append(float('nan'))
 
-    def add_from_array(self, data_array):
-        """Takes a series of [[time1, value1], [time2, value2]]"""
-        pass
 
 if __name__ == '__main__':
     ts = TSDataFrame()
@@ -69,8 +83,11 @@ if __name__ == '__main__':
     dict2 = [{'time': datetime.date(2013,1,1), 'value': 1.2},
              {'time': datetime.date(2013,1,2), 'value': -5},
              {'time': datetime.date(2013,1,3), 'value': 3.1415}]
-    ts.add_from_dict(dict1)
-    ts.add_from_dict(dict2)
+    dict3 = [[datetime.date(2013,1,1), 1000], 
+             [datetime.date(2013,1,5), 1200]]
+    ts.add(dict1)
+    ts.add(dict2)
+    ts.add(dict3)
     for i, v in enumerate(ts.index):
         print(v, ts.data[i])
     print ts.data
