@@ -39,7 +39,7 @@ class TSDataFrame:
         or an array of arrays like 
         [[period1,value1],[period2,value2]]"""
         if len(data_object) == 0:
-            raise(Exception("Empty data series passed"))
+            raise(Exception("Empty data series passed."))
 
         object_type = type(data_object[0])
 
@@ -53,7 +53,7 @@ class TSDataFrame:
                 period = d[0]
                 value = d[1]
             else: 
-                pass
+                raise(Exception("Bad object type given."))
 
             if period in self.index:
                 "If index already exists, append data."
